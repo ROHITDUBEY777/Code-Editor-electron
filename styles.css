@@ -37,10 +37,18 @@ body {
 }
 
 /* ---------- MAIN LAYOUT ---------- */
+/* top-level layout: content + bottom terminal (VS Code style) */
 #layout {
   display: flex;
+  flex-direction: column;
   height: calc(100vh - 40px);
   overflow: hidden;
+}
+
+#top {
+  display: flex;
+  flex: 1;
+  min-height: 0; /* let children scroll properly */
 }
 
 /* ---------- SIDEBAR (FILE EXPLORER) ---------- */
@@ -83,24 +91,23 @@ body {
 }
 
 /* Tree Node Styles */
+
 .tree-node {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   user-select: none;
   font-size: 14px;
-  cursor: pointer;
 }
 
 .node-label {
   display: flex;
   cursor: pointer;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  
-  padding: 4px 8px;
+  gap: 8px;
+  padding: 6px 8px;
   border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.12s;
 }
 
 .node-label:hover {
@@ -114,26 +121,41 @@ body {
 
 /* Caret for Folders */
 .caret {
-  width: 14px;
-  
+  width: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: rgba(255, 255, 255, 0.6);
-  transition: transform 0.2s ease;
+  transition: transform 0.14s ease;
+  margin-right: 6px;
 }
-.tree-node.open > .node-label .caret {
+.tree-node.open > .caret {
   transform: rotate(90deg);
-  cursor: pointer;
- 
 }
 
 /* Nested Children */
 .children {
-    cursor: pointer;
-
   display: flex;
   flex-direction: column;
   margin-top: 2px;
-  border-left: 1px dashed rgba(255, 255, 255, 0.05);
+  border-left: 1px dashed rgba(255, 255, 255, 0.03);
   padding-left: 6px;
+}
+
+.node-icon {
+  width: 16px;
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  margin-right: 6px;
+}
+.node-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node > .node-label:hover {
+  background: rgba(255,255,255,0.03);
 }
 
 /* ---------- MAIN EDITOR AREA ---------- */
@@ -192,8 +214,7 @@ body {
   border-top: 1px solid #333;
   display: flex;
   flex-direction: column;
-
-  cursor: pointer;
+  height: 240px; /* default terminal height */
 }
 #terminal-toolbar {
   background: #2d2d2d;
@@ -201,12 +222,20 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  
   border-bottom: 1px solid #333;
+}
+#terminal-toolbar input#terminalInput {
+  background: #1e1e1e;
+  color: #ddd;
+  border: 1px solid #333;
+  padding: 6px 8px;
+  border-radius: 4px;
+  min-width: 240px;
 }
 #terminal-container {
   flex: 1;
-  padding: 4px;
+  padding: 6px;
+  overflow: auto;
 }
 .hidden {
   display: none;

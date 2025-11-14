@@ -29,53 +29,62 @@
   </div>
 
   <div id="layout">
-    <!-- Sidebar (File Explorer) -->
-    <div id="sidebar">
-      <div class="sidebar-header">EXPLORER</div>
+    <div id="top">
+      <!-- Sidebar (File Explorer) -->
+      <div id="sidebar">
+        <div class="sidebar-header">EXPLORER</div>
 
-      <div id="fileTree">
-        <!-- Sample structure (will be filled dynamically by your Electron renderer.js) -->
-        <div class="tree-node directory open">
-          <div class="node-label directory">
-            <span class="caret">▶</span>
-            <i class="fa fa-folder"></i> src
-          </div>
-          <div class="children">
-            <div class="tree-node file">
-              <div class="node-label">
-                <i class="fa fa-file-code"></i> main.js
-              </div>
+        <div id="fileTree">
+          <!-- Sample structure (will be filled dynamically by your Electron renderer.js) -->
+          <div class="tree-node directory open">
+            <div class="node-label directory">
+              <span class="caret">▶</span>
+              <i class="fa fa-folder node-icon"></i>
+              <span class="node-text">src</span>
             </div>
-            <div class="tree-node directory">
-              <div class="node-label directory">
-                <span class="caret">▶</span>
-                <i class="fa fa-folder"></i> components
-              </div>
-              <div class="children">
-                <div class="tree-node file">
-                  <div class="node-label"><i class="fa fa-file-code"></i> App.js</div>
+            <div class="children">
+              <div class="tree-node file">
+                <div class="node-label">
+                  <i class="fa fa-file-code node-icon"></i>
+                  <span class="node-text">main.js</span>
                 </div>
-                <div class="tree-node file">
-                  <div class="node-label"><i class="fa fa-file-code"></i> Header.js</div>
+              </div>
+              <div class="tree-node directory">
+                <div class="node-label directory">
+                  <span class="caret">▶</span>
+                  <i class="fa fa-folder node-icon"></i>
+                  <span class="node-text">components</span>
+                </div>
+                <div class="children">
+                  <div class="tree-node file">
+                    <div class="node-label"><i class="fa fa-file-code node-icon"></i><span class="node-text">App.js</span></div>
+                  </div>
+                  <div class="tree-node file">
+                    <div class="node-label"><i class="fa fa-file-code node-icon"></i><span class="node-text">Header.js</span></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Main editor section -->
+      <div id="main">
+        <div id="tabs"></div>
+        <div id="editor"></div>
+      </div>
     </div>
 
-    <!-- Main editor section -->
-    <div id="main">
-      <div id="tabs"></div>
-      <div id="editor"></div>
-    </div>
-
-    <!-- Terminal Panel -->
+    <!-- Terminal Panel (bottom, VS Code style) -->
     <div id="terminal-panel" class="hidden">
       <div id="terminal-toolbar">
         <button id="terminalToggle">Toggle Terminal</button>
         <button id="newTerminalBtn">New Terminal</button>
+        <button id="terminalClearBtn">Clear</button>
+        <button id="terminalCopyBtn">Copy</button>
+        <input id="terminalInput" placeholder="Run command..." />
+        <button id="terminalRunBtn">Run</button>
         <span id="terminalStatus" class="muted">(no terminal)</span>
       </div>
       <div id="terminal-container"></div>

@@ -181,10 +181,10 @@ function createTreeNode(entry, depth) {
   wrapper.appendChild(label);
 
   if (entry.isDirectory) {
+    if (entry.isDirectory) wrapper.classList.add('directory');
     const caret = document.createElement('span');
     caret.className = 'caret';
     caret.textContent = '▸';
-    caret.style.marginRight = '6px';
     wrapper.insertBefore(caret, label);
 
     const childrenContainer = document.createElement('div');
@@ -207,6 +207,8 @@ function createTreeNode(entry, depth) {
       const opened = childrenContainer.style.display === 'block';
       childrenContainer.style.display = opened ? 'none' : 'block';
       caret.textContent = opened ? '▸' : '▾';
+      // reflect open state for CSS (caret rotation, etc.)
+      wrapper.classList.toggle('open', !opened);
     };
 
     // click on caret toggles, click on label toggles folder expansion
@@ -224,6 +226,41 @@ const termToggleBtn = document.getElementById('terminalToggle');
 const newTermBtn = document.getElementById('newTerminalBtn');
 if (termToggleBtn) termToggleBtn.addEventListener('click', () => toggleTerminal());
 if (newTermBtn) newTermBtn.addEventListener('click', () => { const panel = document.getElementById('terminal-panel'); if (panel) panel.classList.remove('hidden'); createTerminal(true); });
+
+// Terminal toolbar extra features
+const termClearBtn = document.getElementById('terminalClearBtn');
+const termCopyBtn = document.getElementById('terminalCopyBtn');
+const termRunBtn = document.getElementById('terminalRunBtn');
+const termInput = document.getElementById('terminalInput');
+if (termClearBtn) termClearBtn.addEventListener('click', () => { if (term && typeof term.clear === 'function') term.clear(); });
+if (termCopyBtn) termCopyBtn.addEventListener('click', async () => {
+  if (term && typeof term.getSelection === 'function') {
+    const sel = term.getSelection();
+    if (sel && sel.length) await navigator.clipboard.writeText(sel);
+    else {
+      // fallback: copy entire terminal container text
+      const cont = document.getElementById('terminal-container');
+      if (cont) await navigator.clipboard.writeText(cont.innerText || '');
+    }
+  }
+});
+if (termRunBtn) termRunBtn.addEventListener('click', async () => {
+  if (!term) await createTerminal();
+  const val = termInput ? termInput.value : '';
+  if (val && terminalId) {
+    window.terminalAPI.write(terminalId, val + '\r');
+    if (termInput) termInput.value = '';
+  }
+});
+
+// Keyboard shortcut: Ctrl+` toggles terminal (and Cmd+` on mac)
+window.addEventListener('keydown', (e) => {
+  const isBacktick = e.key === '`' || e.code === 'Backquote';
+  if (isBacktick && (e.ctrlKey || e.metaKey)) {
+    toggleTerminal();
+    e.preventDefault();
+  }
+});
 
 // --- Terminal integration (xterm + PTY) ---
 let term = null;
