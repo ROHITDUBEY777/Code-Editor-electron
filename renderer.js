@@ -76,7 +76,7 @@ require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.34.1/min/vs' 
 require(['vs/editor/editor.main'], function () {
   editor = monaco.editor.create(document.getElementById('editor'), {
     value: ['// Welcome to your Electron editor', ''].join('\n'),
-    language: 'javascript',
+    language: '',
     theme: 'vs-dark',
     automaticLayout: true
   });
@@ -184,7 +184,7 @@ function createTreeNode(entry, depth) {
     if (entry.isDirectory) wrapper.classList.add('directory');
     const caret = document.createElement('span');
     caret.className = 'caret';
-    caret.textContent = '▸';
+    caret.innerHTML = `<img src="./assets/image.png" width="80%" alt="" />`;
     wrapper.insertBefore(caret, label);
 
     const childrenContainer = document.createElement('div');
@@ -206,7 +206,7 @@ function createTreeNode(entry, depth) {
       }
       const opened = childrenContainer.style.display === 'block';
       childrenContainer.style.display = opened ? 'none' : 'block';
-      caret.textContent = opened ? '▸' : '▾';
+      caret.innerHTML = opened ? `<img src="./assets/image.png" width="80%" alt="" />` : `<img src="./assets/image.png" width="80%" alt="" />`;
       // reflect open state for CSS (caret rotation, etc.)
       wrapper.classList.toggle('open', !opened);
     };

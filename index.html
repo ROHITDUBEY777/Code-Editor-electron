@@ -2,10 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8" />
+
+  <!-- Updated CSP (Works with Monaco + Xterm) -->
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' 'unsafe-inline' https:;
-             script-src 'self' https://unpkg.com 'unsafe-eval' 'unsafe-inline';
-             style-src 'self' 'unsafe-inline' https:;">
+    content="
+      default-src 'self' https:;
+      script-src 'self' https://unpkg.com 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline' https:;
+      worker-src 'self' blob:;
+    ">
+
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Electron Code Editor</title>
 
@@ -13,7 +19,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css">
 
-  <!-- Optional icons (for folder/file icons like VS Code) -->
+  <!-- Icons -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -30,12 +36,13 @@
 
   <div id="layout">
     <div id="top">
-      <!-- Sidebar (File Explorer) -->
+
+      <!-- Sidebar -->
       <div id="sidebar">
         <div class="sidebar-header">EXPLORER</div>
 
         <div id="fileTree">
-          <!-- Sample structure (will be filled dynamically by your Electron renderer.js) -->
+          <!-- Example static tree (renderer.js will replace this dynamically) -->
           <div class="tree-node directory open">
             <div class="node-label directory">
               <span class="caret">▶</span>
@@ -66,17 +73,18 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
-      <!-- Main editor section -->
+      <!-- Main Editor -->
       <div id="main">
         <div id="tabs"></div>
         <div id="editor"></div>
       </div>
     </div>
 
-    <!-- Terminal Panel (bottom, VS Code style) -->
+    <!-- Terminal Panel -->
     <div id="terminal-panel" class="hidden">
       <div id="terminal-toolbar">
         <button id="terminalToggle">Toggle Terminal</button>
@@ -84,28 +92,35 @@
         <button id="terminalClearBtn">Clear</button>
         <button id="terminalCopyBtn">Copy</button>
         <input id="terminalInput" placeholder="Run command..." />
-        <button id="terminalRunBtn">Run</button>
+        <button style="cursor: pointer;" id="terminalRunBtn">Run</button>
         <span id="terminalStatus" class="muted">(no terminal)</span>
       </div>
+
       <div id="terminal-container"></div>
     </div>
+
   </div>
 
-  <!-- Scripts -->
+  <!-- Required scripts -->
   <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>
   <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
   <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
-  <script src="renderer.js"></script>
 
-  <!-- Explorer Toggle Logic -->
+  <!-- renderer.js MUST be loaded as a module -->
+  <script type="module" src="./renderer.js"></script>
+  
+
+
+  <!-- Sidebar expand/collapse -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".node-label.directory").forEach((dir) => {
+      document.querySelectorAll(".node-label.directory").forEach(dir => {
         dir.addEventListener("click", () => {
           dir.parentElement.classList.toggle("open");
         });
       });
     });
   </script>
+
 </body>
 </html>
