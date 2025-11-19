@@ -233,9 +233,11 @@ body {
   min-width: 240px;
 }
 #terminal-container {
-  flex: 1;
-  padding: 6px;
+  /* flex: 1; */
+  padding: 5px 10px;
+  padding-bottom: 20px;
   overflow: auto;
+  font-size: small;
 }
 .hidden {
   display: none;

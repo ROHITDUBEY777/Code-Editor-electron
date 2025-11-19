@@ -1,73 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' https:;
+             script-src 'self' https://unpkg.com 'unsafe-eval' 'unsafe-inline';
+             style-src 'self' 'unsafe-inline' https:;"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Electron Code Editor</title>
 
-  <!-- Updated CSP (Works with Monaco + Xterm) -->
-  <meta http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self' https:;
-      script-src 'self' https://unpkg.com 'unsafe-inline' 'unsafe-eval';
-      style-src 'self' 'unsafe-inline' https:;
-      worker-src 'self' blob:;
-    ">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Electron Code Editor</title>
+    <!-- Optional icons (for folder/file icons like VS Code) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css">
+  <body>
+    <div id="toolbar">
+      <button id="newBtn">New</button>
+      <button id="openBtn">Open</button>
+      <button id="openFolderBtn">Open Folder</button>
+      <button id="saveBtn">Save</button>
+      <button id="saveAsBtn">Save As</button>
+      <span id="filePath" class="muted">(untitled)</span>
+    </div>
 
-  <!-- Icons -->
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
+    <div id="layout">
+      <div id="top">
+        <!-- Sidebar (File Explorer) -->
+        <div id="sidebar">
+          <div class="sidebar-header">EXPLORER</div>
 
-<body>
-  <div id="toolbar">
-    <button id="newBtn">New</button>
-    <button id="openBtn">Open</button>
-    <button id="openFolderBtn">Open Folder</button>
-    <button id="saveBtn">Save</button>
-    <button id="saveAsBtn">Save As</button>
-    <span id="filePath" class="muted">(untitled)</span>
-  </div>
-
-  <div id="layout">
-    <div id="top">
-
-      <!-- Sidebar -->
-      <div id="sidebar">
-        <div class="sidebar-header">EXPLORER</div>
-
-        <div id="fileTree">
-          <!-- Example static tree (renderer.js will replace this dynamically) -->
-          <div class="tree-node directory open">
-            <div class="node-label directory">
-              <span class="caret">▶</span>
-              <i class="fa fa-folder node-icon"></i>
-              <span class="node-text">src</span>
-            </div>
-            <div class="children">
-              <div class="tree-node file">
-                <div class="node-label">
-                  <i class="fa fa-file-code node-icon"></i>
-                  <span class="node-text">main.js</span>
-                </div>
+          <div id="fileTree">
+            <!-- Sample structure (will be filled dynamically by your Electron renderer.js) -->
+            <div class="tree-node directory open">
+              <div class="node-label directory">
+                <span class="caret">▶</span>
+                <i class="fa fa-folder node-icon"></i>
+                <span class="node-text">src</span>
               </div>
-              <div class="tree-node directory">
-                <div class="node-label directory">
-                  <span class="caret">▶</span>
-                  <i class="fa fa-folder node-icon"></i>
-                  <span class="node-text">components</span>
-                </div>
-                <div class="children">
-                  <div class="tree-node file">
-                    <div class="node-label"><i class="fa fa-file-code node-icon"></i><span class="node-text">App.js</span></div>
+              <div class="children">
+                <div class="tree-node file">
+                  <div class="node-label">
+                    <i class="fa fa-file-code node-icon"></i>
+                    <span class="node-text">main.js</span>
                   </div>
-                  <div class="tree-node file">
-                    <div class="node-label"><i class="fa fa-file-code node-icon"></i><span class="node-text">Header.js</span></div>
+                </div>
+                <div class="tree-node directory">
+                  <div class="node-label directory">
+                    <span class="caret">▶</span>
+                    <i class="fa fa-folder node-icon"></i>
+                    <span class="node-text">components</span>
+                  </div>
+                  <div class="children">
+                    <div class="tree-node file">
+                      <div class="node-label">
+                        <i class="fa fa-file-code node-icon"></i
+                        ><span class="node-text">App.js</span>
+                      </div>
+                    </div>
+                    <div class="tree-node file">
+                      <div class="node-label">
+                        <i class="fa fa-file-code node-icon"></i
+                        ><span class="node-text">Header.js</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -75,52 +79,46 @@
           </div>
 
         </div>
+
+        <!-- Main editor section -->
+        <div id="main">
+          <div id="tabs"></div>
+          <div id="editor"></div>
+        </div>
       </div>
 
-      <!-- Main Editor -->
-      <div id="main">
-        <div id="tabs"></div>
-        <div id="editor"></div>
+      <!-- Terminal Panel (bottom, VS Code style) -->
+      <div id="terminal-panel" class="hidden">
+        <div id="terminal-toolbar">
+          <button id="terminalToggle">Toggle Terminal</button>
+          <!-- <button id="newTerminalBtn">New Terminal</button> -->
+          <button id="terminalClearBtn">Clear</button>
+          <button id="terminalCopyBtn">Copy</button>
+          <form id="terminalForm">
+            <input id="terminalInput" placeholder="Run command..." />
+            <button id="terminalRunBtn">Run</button>
+          </form>
+          <!-- <span id="terminalStatus" class="muted">(no terminal)</span> -->
+        </div>
+        <div id="terminal-container"></div>
       </div>
     </div>
 
-    <!-- Terminal Panel -->
-    <div id="terminal-panel" class="hidden">
-      <div id="terminal-toolbar">
-        <button id="terminalToggle">Toggle Terminal</button>
-        <button id="newTerminalBtn">New Terminal</button>
-        <button id="terminalClearBtn">Clear</button>
-        <button id="terminalCopyBtn">Copy</button>
-        <input id="terminalInput" placeholder="Run command..." />
-        <button style="cursor: pointer;" id="terminalRunBtn">Run</button>
-        <span id="terminalStatus" class="muted">(no terminal)</span>
-      </div>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>
+    <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script src="renderer.js"></script>
 
-      <div id="terminal-container"></div>
-    </div>
-
-  </div>
-
-  <!-- Required scripts -->
-  <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>
-  <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
-  <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
-
-  <!-- renderer.js MUST be loaded as a module -->
-  <script type="module" src="./renderer.js"></script>
-  
-
-
-  <!-- Sidebar expand/collapse -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".node-label.directory").forEach(dir => {
-        dir.addEventListener("click", () => {
-          dir.parentElement.classList.toggle("open");
+    <!-- Explorer Toggle Logic -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".node-label.directory").forEach((dir) => {
+          dir.addEventListener("click", () => {
+            dir.parentElement.classList.toggle("open");
+          });
         });
       });
-    });
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>
