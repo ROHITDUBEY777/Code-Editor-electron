@@ -91,13 +91,13 @@ function requireName(fp) {
   return fp.split(/[\\/]/).pop();
 }
 
-require.config({ paths: { vs: "https://unpkg.com/monaco-editor@0.34.1/min/vs" } });
-require(["vs/editor/editor.main"], function () {
-  editor = monaco.editor.create(document.getElementById("editor"), {
-    value: ["// Welcome to your Electron editor", ""].join("\n"),
-    language: "javascript",
-    theme: "vs-dark",
-    automaticLayout: true,
+require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.34.1/min/vs' } });
+require(['vs/editor/editor.main'], function () {
+  editor = monaco.editor.create(document.getElementById('editor'), {
+    value: ['// Welcome to your Electron editor', ''].join('\n'),
+    language: '',
+    theme: 'vs-dark',
+    automaticLayout: true
   });
 
   // create initial untitled tab
@@ -209,10 +209,10 @@ function createTreeNode(entry, depth) {
   wrapper.appendChild(label);
 
   if (entry.isDirectory) {
-    if (entry.isDirectory) wrapper.classList.add("directory");
-    const caret = document.createElement("span");
-    caret.className = "caret";
-    caret.textContent = "▸";
+    if (entry.isDirectory) wrapper.classList.add('directory');
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    caret.innerHTML = `<img src="./assets/image.png" width="80%" alt="" />`;
     wrapper.insertBefore(caret, label);
 
     const childrenContainer = document.createElement("div");
@@ -232,9 +232,9 @@ function createTreeNode(entry, depth) {
         }
         loaded = true;
       }
-      const opened = childrenContainer.style.display === "block";
-      childrenContainer.style.display = opened ? "none" : "block";
-      caret.textContent = opened ? "▸" : "▾";
+      const opened = childrenContainer.style.display === 'block';
+      childrenContainer.style.display = opened ? 'none' : 'block';
+      caret.innerHTML = opened ? `<img src="./assets/image.png" width="80%" alt="" />` : `<img src="./assets/image.png" width="80%" alt="" />`;
       // reflect open state for CSS (caret rotation, etc.)
       wrapper.classList.toggle("open", !opened);
     };
