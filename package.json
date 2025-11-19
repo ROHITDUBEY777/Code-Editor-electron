@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "start:dev": "npx electron ."
-  },
+  },  
   "devDependencies": {
     "electron": "^26.0.0",
     "electron-rebuild": "^3.2.9"
