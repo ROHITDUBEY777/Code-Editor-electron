@@ -197,8 +197,8 @@ function renderRootFolder(rootPath) {
 
 function createTreeNode(entry, depth) {
   const wrapper = document.createElement("div");
-  wrapper.className = "tree-node";
-  wrapper.style.paddingLeft = 12 + depth * 12 + "px";
+  // wrapper.className = "tree-node";
+  wrapper.style.paddingLeft = 6 + depth * 12 + "px";
 
   const label = document.createElement("span");
   label.className = "file";
@@ -212,7 +212,7 @@ function createTreeNode(entry, depth) {
     if (entry.isDirectory) wrapper.classList.add("directory");
     const caret = document.createElement("span");
     caret.className = "caret";
-    caret.textContent = "▸";
+    caret.innerHTML = `<img src="./assets/image.png" width="80%" alt="" />`;
     wrapper.insertBefore(caret, label);
 
     const childrenContainer = document.createElement("div");
@@ -234,7 +234,7 @@ function createTreeNode(entry, depth) {
       }
       const opened = childrenContainer.style.display === "block";
       childrenContainer.style.display = opened ? "none" : "block";
-      caret.textContent = opened ? "▸" : "▾";
+      caret.innerHTML = opened ?`<img src="./assets/image.png" width="80%" alt="" />`: `<img src="./assets/image.png" width="80%" alt="" />`;
       // reflect open state for CSS (caret rotation, etc.)
       wrapper.classList.toggle("open", !opened);
     };
