@@ -6,6 +6,7 @@ body {
   color: #ddd;
   height: 100vh;
   overflow: hidden;
+ 
 }
 
 /* ---------- TOOLBAR ---------- */
@@ -77,6 +78,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 #fileTree::-webkit-scrollbar {
@@ -97,6 +99,7 @@ body {
   flex-direction: column;
   user-select: none;
   font-size: 14px;
+  
 }
 
 .node-label {
@@ -108,10 +111,12 @@ body {
   padding: 6px 8px;
   border-radius: 4px;
   transition: background 0.12s;
+   cursor: pointer;
 }
 
 .node-label:hover {
   background: rgba(255, 255, 255, 0.08);
+  
 }
 
 .node-label.directory {
@@ -128,6 +133,7 @@ body {
   color: rgba(255, 255, 255, 0.6);
   transition: transform 0.14s ease;
   margin-right: 6px;
+  cursor: pointer;
 }
 .tree-node.open > .caret {
   transform: rotate(90deg);
@@ -140,6 +146,7 @@ body {
   margin-top: 2px;
   border-left: 1px dashed rgba(255, 255, 255, 0.03);
   padding-left: 6px;
+   cursor: pointer;
 }
 
 .node-icon {
@@ -152,6 +159,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+   cursor: pointer;
 }
 
 .tree-node > .node-label:hover {
@@ -213,7 +221,7 @@ body {
   background: #1e1e1e;
   border-top: 1px solid #333;
   display: flex;
-  flex-direction: column;
+  flex-direction: column ;
   height: 240px; /* default terminal height */
 }
 #terminal-toolbar {
@@ -242,3 +250,54 @@ body {
 .hidden {
   display: none;
 }
+#browser-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 640px;
+  height: 72%;
+  background: #0f1113;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 1200;
+  display: none;
+  border-radius: 8px;
+ 
+}
+
+/* #browser-container webview {
+  width: 640px;
+  height:  72%;
+  display: flex;
+  z-index: 1200;
+  position: fixed;
+
+} */
+
+
+ 
+
+/* }
+.browser-buttons {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: wheat;
+  padding: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+.browser-buttons button {
+  background: #2b2d30;
+  color: #fff;
+  border: 1px solid white;
+  z-index: 100;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.browser-buttons button:hover { background: #3b3d40; } */

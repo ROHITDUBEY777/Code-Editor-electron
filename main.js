@@ -15,20 +15,26 @@ try {
   }
 }
 const ptyAvailable = !!pty;
+console.log("MAIN PROCESS STARTED");
+
+let mainWindow = null;
 
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: false,
+      webviewTag: true,
     },
   });
 
-  win.loadFile("index.html");
+  mainWindow.loadFile("index.html");
 }
+
 
 app.whenReady().then(() => {
   createWindow();
@@ -259,6 +265,7 @@ ipcMain.handle("run-command", async (event, cmd) => {
     });
   });
 });
+
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();

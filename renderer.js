@@ -142,6 +142,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const openBrowserBtn = document.getElementById("openBrowserBtn");
+  if (openBrowserBtn) openBrowserBtn.addEventListener("click", () => toggleBrowser());
+
   document.getElementById("saveBtn").addEventListener("click", async () => {
     const tab = tabs.find((t) => t.id === activeTabId);
     if (!tab) return;
@@ -253,6 +256,74 @@ function createTreeNode(entry, depth) {
   }
 
   return wrapper;
+}
+// =======================
+// BROWSER INTEGRATION
+// =======================
+console.log("Renderer loaded!");
+console.log("browserAPI =", window.browserAPI);
+
+function getBrowserView() {
+  return document.getElementById("browser-view");
+}
+
+// Show browser & attach events
+function showBrowser() {
+  const container = document.getElementById("browser-container");
+  container.style.display = "block";
+  setupWebviewEvents();
+}
+
+// Buttons
+function openGoogle() {
+  console.log("Google CLicked");
+  console.log("Calling browserAPI.navigate...");
+console.log(window.browserAPI);
+
+  showBrowser();
+  window.browserAPI.navigate("https://www.google.com");
+}
+
+// function openDocs() {
+//   showBrowser();
+//   window.browserAPI.navigate("https://code.visualstudio.com/docs");
+// }
+
+function toggleBrowser() {
+  const container = document.getElementById("browser-container");
+  const isOpen = container.style.display === "none";
+  container.style.display = isOpen ? "flex" : "none";
+  if (!isOpen) setupWebviewEvents();
+}
+
+// Attach webview events
+function setupWebviewEvents() {
+  const webview = getBrowserView();
+  if (!webview || webview.__eventsAttached) return;
+
+  webview.addEventListener("dom-ready", () => {
+    console.log("DOM READY");
+    webview.setZoomLevel(0);
+  });
+
+  webview.addEventListener("did-finish-load", () => {
+    console.log("did-finish-load", webview.getURL());
+  });
+
+  webview.addEventListener("did-fail-load", (e) => {
+    console.error("FAILED LOAD", e.errorDescription);
+      // If the load failed due to embed-blocking, open in external window as fallback
+      if (e.isMainFrame === true) {
+        // try asking main process to open a new window
+        try { window.browserAPI.openWindow(e.validatedURL || e.url); } catch (err) { console.warn('openWindow failed', err); }
+      }
+  });
+
+  webview.addEventListener("new-window", (e) => {
+    webview.loadURL(e.url);
+  });
+
+  webview.__eventsAttached = true;
 }
 
 // Attach terminal control buttons (script is loaded at end of body, so DOM elements exist)
@@ -450,3 +521,4 @@ document.addEventListener("DOMContentLoaded", () => {
     input.value = "";
   });
 });
+
