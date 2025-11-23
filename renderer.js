@@ -5,13 +5,92 @@ let activeTabId = null;
 function getLangFromPath(p) {
   const ext = (p || "").split(".").pop().toLowerCase();
   const map = {
-    js: "javascript",
-    ts: "typescript",
-    json: "json",
-    html: "html",
-    css: "css",
-    md: "markdown",
-  };
+  // Web
+  js: "javascript",
+  jsx: "javascript",
+  ts: "typescript",
+  tsx: "typescript",
+  json: "json",
+  html: "html",
+  css: "css",
+  scss: "scss",
+  less: "less",
+  xml: "xml",
+  svg: "xml",
+  markdown: "markdown",
+  md: "markdown",
+  
+  // C / C++
+  c: "c",
+  h: "c",
+  cpp: "cpp",
+  cc: "cpp",
+  cxx: "cpp",
+  hpp: "cpp",
+
+  // Java family
+  java: "java",
+
+  // Python
+  py: "python",
+  pyw: "python",
+
+  // PHP
+  php: "php",
+
+  // C#
+  cs: "csharp",
+
+  // Go
+  go: "go",
+
+  // Shell / Bash
+  sh: "shell",
+  bash: "shell",
+
+  // SQL
+  sql: "sql",
+
+  // Ruby
+  rb: "ruby",
+
+  // Swift
+  swift: "swift",
+
+  // R
+  r: "r",
+
+  // Lua
+  lua: "lua",
+
+  // Rust
+  rs: "rust",
+
+  // Dart
+  dart: "dart",
+
+  // Kotlin
+  kt: "kotlin",
+  kts: "kotlin",
+
+  // YAML
+  yaml: "yaml",
+  yml: "yaml",
+
+  // PowerShell
+  ps1: "powershell",
+
+  // Dockerfile
+  dockerfile: "dockerfile",
+
+  // Other
+  ini: "ini",
+  bat: "bat",
+  log: "log",
+  asm: "asm",
+  plaintext: "plaintext",
+};
+
   return map[ext] || "plaintext";
 }
 
@@ -237,7 +316,7 @@ function createTreeNode(entry, depth) {
       }
       const opened = childrenContainer.style.display === "block";
       childrenContainer.style.display = opened ? "none" : "block";
-      caret.innerHTML = opened ?`<img src="./assets/image.png" width="80%" alt="" />`: `<img src="./assets/image.png" width="80%" alt="" />`;
+      caret.innerHTML = opened ?`<img src="./assets/image.png" width="80%" alt="" />` : `<img src="./assets/image.png" width="80%" alt="" />`;
       // reflect open state for CSS (caret rotation, etc.)
       wrapper.classList.toggle("open", !opened);
     };
@@ -257,9 +336,8 @@ function createTreeNode(entry, depth) {
 
   return wrapper;
 }
-// =======================
-// BROWSER INTEGRATION
-// =======================
+
+//Browser Integration
 console.log("Renderer loaded!");
 console.log("browserAPI =", window.browserAPI);
 
