@@ -1,6 +1,7 @@
 let editor = null;
 const tabs = [];
 let activeTabId = null;
+let currentRoot = null; // path of opened folder in explorer
 
 function getLangFromPath(p) {
   const ext = (p || "").split(".").pop().toLowerCase();
@@ -217,6 +218,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (res && !res.canceled) {
       // set root folder and render root node
       const rootPath = res.folder;
+      currentRoot = rootPath;
       renderRootFolder(rootPath);
     }
   });
@@ -257,6 +259,12 @@ window.addEventListener("DOMContentLoaded", () => {
       tab.isDirty = false;
       renderTabs();
       document.getElementById("filePath").textContent = tab.filePath;
+      // refresh explorer if the file was saved inside the currently opened root
+      try {
+        if (currentRoot && tab.filePath && tab.filePath.startsWith(currentRoot)) {
+          renderRootFolder(currentRoot);
+        }
+      } catch (e) { console.warn('refresh explorer failed', e); }
     }
   });
 });
@@ -361,11 +369,6 @@ console.log(window.browserAPI);
   showBrowser();
   window.browserAPI.navigate("https://www.google.com");
 }
-
-// function openDocs() {
-//   showBrowser();
-//   window.browserAPI.navigate("https://code.visualstudio.com/docs");
-// }
 
 function toggleBrowser() {
   const container = document.getElementById("browser-container");
