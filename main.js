@@ -35,7 +35,6 @@ function createWindow() {
   mainWindow.loadFile("index.html");
 }
 
-
 app.whenReady().then(() => {
   createWindow();
 
@@ -252,11 +251,12 @@ ipcMain.handle("dialog:saveAs", async (event, content) => {
   return { canceled: false, filePath };
 });
 
-ipcMain.handle("run-command", async (event, cmd) => {
+ipcMain.handle("run-command", async (event, cmd, dirPath) => {
   console.log("Received from renderer:", cmd);
+  console.log("path: " + dirPath);
 
   return new Promise((resolve) => {
-    exec(cmd, { shell: "powershell.exe" }, (error, stdout, stderr) => {
+    exec(cmd, { shell: "powershell.exe", cwd: dirPath }, (error, stdout, stderr) => {
       if (error) {
         resolve(stderr || error.message);
       } else {
@@ -265,7 +265,6 @@ ipcMain.handle("run-command", async (event, cmd) => {
     });
   });
 });
-
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();

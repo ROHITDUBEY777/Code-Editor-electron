@@ -11,30 +11,24 @@ contextBridge.exposeInMainWorld("electronAPI", {
   readDir: (dirPath) => ipcRenderer.invoke("dir:read", dirPath),
 
   // Receive IPC from main
- 
-   
 });
-
 
 contextBridge.exposeInMainWorld("terminalAPI", {
   create: (opts) => ipcRenderer.invoke("terminal:create", opts),
   write: (id, data) => ipcRenderer.invoke("terminal:write", { id, data }),
-  resize: (id, cols, rows) =>
-    ipcRenderer.invoke("terminal:resize", { id, cols, rows }),
+  resize: (id, cols, rows) => ipcRenderer.invoke("terminal:resize", { id, cols, rows }),
   kill: (id) => ipcRenderer.invoke("terminal:kill", id),
   onData: (cb) => ipcRenderer.on("terminal:data", (event, arg) => cb(arg)),
   onExit: (cb) => ipcRenderer.on("terminal:exit", (event, arg) => cb(arg)),
-  sendCommand: (cmd) => ipcRenderer.invoke("run-command", cmd),
+  sendCommand: (cmd, dirPath) => ipcRenderer.invoke("run-command", cmd, dirPath),
 });
-
 
 contextBridge.exposeInMainWorld("browserAPI", {
   navigate: (url) => ipcRenderer.invoke("browser:navigate", url),
   goBack: () => ipcRenderer.invoke("browser:back"),
   goForward: () => ipcRenderer.invoke("browser:forward"),
   reload: () => ipcRenderer.invoke("browser:reload"),
-receive: (channel, func) =>
-    ipcRenderer.on(channel, (event, ...args) => func(...args)),
-  openWindow: (url) => ipcRenderer.invoke('browser:open-window', url),
+  receive: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
+  openWindow: (url) => ipcRenderer.invoke("browser:open-window", url),
 });
 console.log("browserAPI loaded in preload");

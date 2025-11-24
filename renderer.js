@@ -2,95 +2,95 @@ let editor = null;
 const tabs = [];
 let activeTabId = null;
 let currentRoot = null; // path of opened folder in explorer
-
+let dirPath = null;
 function getLangFromPath(p) {
   const ext = (p || "").split(".").pop().toLowerCase();
   const map = {
-  // Web
-  js: "javascript",
-  jsx: "javascript",
-  ts: "typescript",
-  tsx: "typescript",
-  json: "json",
-  html: "html",
-  css: "css",
-  scss: "scss",
-  less: "less",
-  xml: "xml",
-  svg: "xml",
-  markdown: "markdown",
-  md: "markdown",
-  
-  // C / C++
-  c: "c",
-  h: "c",
-  cpp: "cpp",
-  cc: "cpp",
-  cxx: "cpp",
-  hpp: "cpp",
+    // Web
+    js: "javascript",
+    jsx: "javascript",
+    ts: "typescript",
+    tsx: "typescript",
+    json: "json",
+    html: "html",
+    css: "css",
+    scss: "scss",
+    less: "less",
+    xml: "xml",
+    svg: "xml",
+    markdown: "markdown",
+    md: "markdown",
 
-  // Java family
-  java: "java",
+    // C / C++
+    c: "c",
+    h: "c",
+    cpp: "cpp",
+    cc: "cpp",
+    cxx: "cpp",
+    hpp: "cpp",
 
-  // Python
-  py: "python",
-  pyw: "python",
+    // Java family
+    java: "java",
 
-  // PHP
-  php: "php",
+    // Python
+    py: "python",
+    pyw: "python",
 
-  // C#
-  cs: "csharp",
+    // PHP
+    php: "php",
 
-  // Go
-  go: "go",
+    // C#
+    cs: "csharp",
 
-  // Shell / Bash
-  sh: "shell",
-  bash: "shell",
+    // Go
+    go: "go",
 
-  // SQL
-  sql: "sql",
+    // Shell / Bash
+    sh: "shell",
+    bash: "shell",
 
-  // Ruby
-  rb: "ruby",
+    // SQL
+    sql: "sql",
 
-  // Swift
-  swift: "swift",
+    // Ruby
+    rb: "ruby",
 
-  // R
-  r: "r",
+    // Swift
+    swift: "swift",
 
-  // Lua
-  lua: "lua",
+    // R
+    r: "r",
 
-  // Rust
-  rs: "rust",
+    // Lua
+    lua: "lua",
 
-  // Dart
-  dart: "dart",
+    // Rust
+    rs: "rust",
 
-  // Kotlin
-  kt: "kotlin",
-  kts: "kotlin",
+    // Dart
+    dart: "dart",
 
-  // YAML
-  yaml: "yaml",
-  yml: "yaml",
+    // Kotlin
+    kt: "kotlin",
+    kts: "kotlin",
 
-  // PowerShell
-  ps1: "powershell",
+    // YAML
+    yaml: "yaml",
+    yml: "yaml",
 
-  // Dockerfile
-  dockerfile: "dockerfile",
+    // PowerShell
+    ps1: "powershell",
 
-  // Other
-  ini: "ini",
-  bat: "bat",
-  log: "log",
-  asm: "asm",
-  plaintext: "plaintext",
-};
+    // Dockerfile
+    dockerfile: "dockerfile",
+
+    // Other
+    ini: "ini",
+    bat: "bat",
+    log: "log",
+    asm: "asm",
+    plaintext: "plaintext",
+  };
 
   return map[ext] || "plaintext";
 }
@@ -219,6 +219,8 @@ window.addEventListener("DOMContentLoaded", () => {
       // set root folder and render root node
       const rootPath = res.folder;
       currentRoot = rootPath;
+      console.log(rootPath);
+      dirPath = rootPath;
       renderRootFolder(rootPath);
     }
   });
@@ -264,7 +266,9 @@ window.addEventListener("DOMContentLoaded", () => {
         if (currentRoot && tab.filePath && tab.filePath.startsWith(currentRoot)) {
           renderRootFolder(currentRoot);
         }
-      } catch (e) { console.warn('refresh explorer failed', e); }
+      } catch (e) {
+        console.warn("refresh explorer failed", e);
+      }
     }
   });
 });
@@ -324,7 +328,9 @@ function createTreeNode(entry, depth) {
       }
       const opened = childrenContainer.style.display === "block";
       childrenContainer.style.display = opened ? "none" : "block";
-      caret.innerHTML = opened ?`<img src="./assets/image.png" width="80%" alt="" />` : `<img src="./assets/image.png" width="80%" alt="" />`;
+      caret.innerHTML = opened
+        ? `<img src="./assets/image.png" width="80%" alt="" />`
+        : `<img src="./assets/image.png" width="80%" alt="" />`;
       // reflect open state for CSS (caret rotation, etc.)
       wrapper.classList.toggle("open", !opened);
     };
@@ -364,7 +370,7 @@ function showBrowser() {
 function openGoogle() {
   console.log("Google CLicked");
   console.log("Calling browserAPI.navigate...");
-console.log(window.browserAPI);
+  console.log(window.browserAPI);
 
   showBrowser();
   window.browserAPI.navigate("https://www.google.com");
@@ -393,11 +399,15 @@ function setupWebviewEvents() {
 
   webview.addEventListener("did-fail-load", (e) => {
     console.error("FAILED LOAD", e.errorDescription);
-      // If the load failed due to embed-blocking, open in external window as fallback
-      if (e.isMainFrame === true) {
-        // try asking main process to open a new window
-        try { window.browserAPI.openWindow(e.validatedURL || e.url); } catch (err) { console.warn('openWindow failed', err); }
+    // If the load failed due to embed-blocking, open in external window as fallback
+    if (e.isMainFrame === true) {
+      // try asking main process to open a new window
+      try {
+        window.browserAPI.openWindow(e.validatedURL || e.url);
+      } catch (err) {
+        console.warn("openWindow failed", err);
       }
+    }
   });
 
   webview.addEventListener("new-window", (e) => {
@@ -593,8 +603,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!cmd) return;
 
     console.log("Sending command to backend:", cmd);
+    // console.log(dirPath.toString());
 
-    const output = await window.terminalAPI.sendCommand(cmd);
+    const output = await window.terminalAPI.sendCommand(cmd, dirPath.toString());
     console.log(output);
 
     document.getElementById("terminal-container").innerText = output.trim();
@@ -602,4 +613,3 @@ document.addEventListener("DOMContentLoaded", () => {
     input.value = "";
   });
 });
-
